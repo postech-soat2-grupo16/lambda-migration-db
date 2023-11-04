@@ -43,3 +43,5 @@ jobs:
           terraform apply -auto-approve
         env:
           TF_VAR_lambda_execution_role: ${{ secrets.LAMBDA_EXECUTION_ROLE }}
+          TF_VAR_rds_endpoint: ${{ secrets.RDS_ENDPOINT }}
+          TF_VAR_rds_db_name: ${{ vars.DB_NAME }}

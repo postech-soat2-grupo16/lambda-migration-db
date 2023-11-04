@@ -57,9 +57,11 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = data.archive_file.code.output_base64sha256
   role             = var.lambda_execution_role
   #layers           = [aws_lambda_layer_version.layer.arn]
+  
   environment {
     variables = {
-      "MESSAGE" = "Terraform sends its regards"
+      "RDS_ENDPOINT" = var.rds_endpoint
+      "DB_NAME" = var.rds_db_name
     }
   }
 }

@@ -14,3 +14,15 @@ variable "lambda_execution_role" {
   type = string
   sensitive = true
 }
+
+variable "rds_endpoint" {
+  description = "rds endpoint"
+  type = string
+  sensitive = true
+}
+
+variable "rds_db_name" {
+  description = "rds db name"
+  type = string
+  sensitive = true
+}

@@ -1,11 +1,12 @@
 import json
 import psycopg2
 import boto3
+import os
 
 def main(event, context):
-    secret_name = "rds/fastfood/secret"
 
     # Create a Secrets Manager client
+    secret_name = "rds/fastfood/secret"
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
@@ -15,27 +16,36 @@ def main(event, context):
     try:
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
         secret = json.loads(get_secret_value_response['SecretString'])
-        # Use the secret data in your Lambda function
         username = secret['username']
-        password = secret['password']        
+        password = secret['password']
 
-        # Check if the event contains a body
-        if 'body' in event:
-            request_body = event['body']
-            # You may need to parse the body as JSON if it's a JSON-encoded request
-            # request_body = json.loads(request_body)
+        #DB connection
+        db_params = {
+            'host': os.environ.get('RDS_ENDPOINT', 'default_value'),
+            'dbname': os.environ.get('DB_NAME'),
+            'user': username,
+            'password': password
+        }
+        connection = psycopg2.connect(**db_params)
+        cursor = connection.cursor()
+        print("Connected to the database")
 
+    except Exception as error:
+        print("Error connecting to the database:", error)
+        response = {
+            'statusCode': 500,
+            'msg': 'Error'
+        }
+        return response
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("Database connection closed")            
+            #Response        
             response = {
                 'statusCode': 200,
                 'username': username
             }
-        else:
-            response = {
-                'statusCode': 400,
-                'body': 'No request body found'
-            }
-
-        return response
-    except Exception as e:
-        print("Error:", e)
-        # Handle errors as needed
+            return response
