@@ -42,7 +42,7 @@ def main(event, context):
         #Response        
         response = {
             'statusCode': 200,
-            'username': username
+            'username': db_username
         }
         return response
     except Exception as error:
