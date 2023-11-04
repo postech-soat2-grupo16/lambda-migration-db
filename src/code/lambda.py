@@ -18,6 +18,7 @@ def main(event, context):
         secret = json.loads(get_secret_value_response['SecretString'])
         username = secret['username']
         password = secret['password']
+        print('username: ' + username)
 
         #DB connection
         db_params = {
@@ -26,6 +27,7 @@ def main(event, context):
             'user': username,
             'password': password
         }
+        print("DB NAME: "+os.environ.get('DB_NAME'))
         connection = psycopg2.connect(**db_params)
         cursor = connection.cursor()
         print("Connected to the database")
