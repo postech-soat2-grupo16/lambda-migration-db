@@ -21,32 +21,32 @@ resource "null_resource" "pip_install" {
   }
 
   provisioner "local-exec" {
-    command = "python -m pip install -r ../src/code/requirements.txt -t ../src/layer"
+    command = "python -m pip install -r ../src/code/requirements.txt -t ../src/code"
   }
 }
 
-## Cria o .zip da layer
-data "archive_file" "layer" {
-  type        = "zip"
-  source_dir  = "../src/layer"
-  output_path = "../src/layer/layer.zip"
-  depends_on  = [null_resource.pip_install]
-}
+# ## Cria o .zip da layer
+# data "archive_file" "layer" {
+#   type        = "zip"
+#   source_dir  = "../src/layer"
+#   output_path = "../src/layer/layer.zip"
+#   depends_on  = [null_resource.pip_install]
+# }
 
-## Config Layer
-resource "aws_lambda_layer_version" "layer" {
-  layer_name          = "test-layer"
-  filename            = data.archive_file.layer.output_path
-  source_code_hash    = data.archive_file.layer.output_base64sha256
-  compatible_runtimes = ["python3.9", "python3.8", "python3.7", "python3.6"]
-}
+# ## Config Layer
+# resource "aws_lambda_layer_version" "layer" {
+#   layer_name          = "test-layer"
+#   filename            = data.archive_file.layer.output_path
+#   source_code_hash    = data.archive_file.layer.output_base64sha256
+#   compatible_runtimes = ["python3.9", "python3.8", "python3.7", "python3.6"]
+# }
 
 ## .zip do código
 data "archive_file" "code" {
   type        = "zip"
   source_dir  = "../src/code"
   output_path = "../src/code/code.zip"
-  depends_on = [ aws_lambda_layer_version.layer ]
+  depends_on  = [null_resource.pip_install]
 }
 
 ## Infra lambda
@@ -57,7 +57,7 @@ resource "aws_lambda_function" "lambda" {
   filename         = data.archive_file.code.output_path
   source_code_hash = data.archive_file.code.output_base64sha256
   role             = var.lambda_execution_role
-  layers           = [aws_lambda_layer_version.layer.arn]
+  #layers           = [aws_lambda_layer_version.layer.arn]
   environment {
     variables = {
       "MESSAGE" = "Terraform sends its regards"
