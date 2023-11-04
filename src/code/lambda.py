@@ -18,14 +18,19 @@ def main(event, context):
         db_password = secret['password']
         db_name = secret['dbname']
         db_host = secret['host']
-
+        db_port = secret['port']
+        
+        print('db_username: ', db_username)
+        print('db_name: ', db_name)
+        print('db_host: ', db_host)
+        print('db_port:', db_port)
         #DB conn
-
         connection = psycopg2.connect(
             host=db_host,
             dbname=db_name,
             user=db_username,
-            password=db_password
+            password=db_password,
+            port=db_port
         )
         cursor = connection.cursor()
         print("Connected to the database")
