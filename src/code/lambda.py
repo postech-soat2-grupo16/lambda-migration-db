@@ -1,5 +1,5 @@
 import json
-import requests
+import psycopg2
 import boto3
 
 def main(event, context):
