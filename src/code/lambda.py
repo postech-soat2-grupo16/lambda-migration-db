@@ -13,6 +13,7 @@ def main(event, context):
             service_name='secretsmanager',
             region_name='us-east-1'
         )
+        print("chegou2")
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
         secret = json.loads(get_secret_value_response['SecretString'])
         username = secret['username']
