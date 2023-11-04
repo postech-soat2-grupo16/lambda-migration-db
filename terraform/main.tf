@@ -21,7 +21,7 @@ resource "null_resource" "pip_install" {
   }
 
   provisioner "local-exec" {
-    command = "python -m pip install -r ../src/code/requirements.txt -t ../src/code"
+    command = "pip install -r ../src/code/requirements.txt -t ../src/code"
   }
 }
 
