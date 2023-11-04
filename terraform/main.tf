@@ -56,6 +56,7 @@ resource "aws_lambda_function" "lambda" {
   filename         = data.archive_file.code.output_path
   source_code_hash = data.archive_file.code.output_base64sha256
   role             = var.lambda_execution_role
+  timeout          = 180
   #layers           = [aws_lambda_layer_version.layer.arn]
 
   vpc_config {
