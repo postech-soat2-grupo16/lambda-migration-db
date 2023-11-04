@@ -14,16 +14,16 @@ terraform {
   }
 }
 
-## Resource para instalar as deps
-resource "null_resource" "pip_install" {
-  triggers = {
-    shell_hash = "${sha256(file("../src/code/requirements.txt"))}"
-  }
+# ## Resource para instalar as deps
+# resource "null_resource" "pip_install" {
+#   triggers = {
+#     shell_hash = "${sha256(file("../src/code/requirements.txt"))}"
+#   }
 
-  provisioner "local-exec" {
-    command = "python -m pip install -r ../src/code/requirements.txt -t ../src/code"
-  }
-}
+#   provisioner "local-exec" {
+#     command = "python -m pip install -r ../src/code/requirements.txt -t ../src/code"
+#   }
+# }
 
 # ## Cria o .zip da layer
 # data "archive_file" "layer" {
@@ -46,7 +46,6 @@ data "archive_file" "code" {
   type        = "zip"
   source_dir  = "../src/code"
   output_path = "../src/code/code.zip"
-  depends_on  = [null_resource.pip_install]
 }
 
 ## Infra lambda
