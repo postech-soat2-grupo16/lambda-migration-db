@@ -23,7 +23,7 @@ def main(event, context):
 
         connection = psycopg2.connect(
             host=db_host,
-            database=db_name,
+            dbname=db_name,
             user=db_username,
             password=db_password
         )
