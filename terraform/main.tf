@@ -57,11 +57,16 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = data.archive_file.code.output_base64sha256
   role             = var.lambda_execution_role
   #layers           = [aws_lambda_layer_version.layer.arn]
-  
+
+  vpc_config {
+    subnet_ids         = [var.subnet_a, var.subnet_b]
+    security_group_ids = [var.security_group_lambda]
+  }
+
   environment {
     variables = {
       "RDS_ENDPOINT" = var.rds_endpoint
-      "DB_NAME" = var.rds_db_name
+      "DB_NAME"      = var.rds_db_name
     }
   }
 }

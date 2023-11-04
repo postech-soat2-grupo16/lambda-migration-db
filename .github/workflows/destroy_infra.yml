@@ -34,3 +34,6 @@ jobs:
           TF_VAR_lambda_execution_role: ${{ secrets.LAMBDA_EXECUTION_ROLE }}
           TF_VAR_rds_endpoint: ${{ secrets.RDS_ENDPOINT }}
           TF_VAR_rds_db_name: ${{ vars.DB_NAME }}
+          TF_VAR_subnet_a: ${{ vars.SUBNET_A }}
+          TF_VAR_subnet_b: ${{ vars.SUBNET_B }}
+          TF_VAR_security_group_lambda: ${{ vars.SG_CLUSTER_ECS }}
