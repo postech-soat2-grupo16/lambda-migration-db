@@ -21,7 +21,7 @@ resource "null_resource" "pip_install" {
   }
 
   provisioner "local-exec" {
-    command = "pip install -r ../src/code/requirements.txt -t ../src/code"
+    command = "python -m pip install -r ../src/code/requirements.txt -t ../src/code"
   }
 }
 
@@ -53,7 +53,7 @@ data "archive_file" "code" {
 resource "aws_lambda_function" "lambda" {
   function_name    = "test-lambda"
   handler          = "lambda.main"
-  runtime          = "python3.9"
+  runtime          = "python3.8"
   filename         = data.archive_file.code.output_path
   source_code_hash = data.archive_file.code.output_base64sha256
   role             = var.lambda_execution_role
