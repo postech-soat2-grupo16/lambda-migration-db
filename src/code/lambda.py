@@ -4,16 +4,15 @@ import boto3
 import os
 
 def main(event, context):
-
-    # Create a Secrets Manager client
-    secret_name = "rds/fastfood/secret"
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name='us-east-1'
-    )
-
-    try:
+    try:        
+        # Create a Secrets Manager client
+        print("chegou")
+        secret_name = "rds/fastfood/secret"
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name='us-east-1'
+        )
         get_secret_value_response = client.get_secret_value(SecretId=secret_name)
         secret = json.loads(get_secret_value_response['SecretString'])
         username = secret['username']
@@ -21,17 +20,18 @@ def main(event, context):
         print('username: ' + username)
 
         #DB connection
-        db_params = {
-            'host': os.environ.get('RDS_ENDPOINT', 'default_value'),
-            'dbname': os.environ.get('DB_NAME'),
-            'user': username,
-            'password': password
-        }
+        db_host = os.environ['RDS_ENDPOINT']
+        db_name = os.environ['DB_NAME']
         print("DB NAME: "+os.environ.get('DB_NAME'))
-        connection = psycopg2.connect(**db_params)
+
+        connection = psycopg2.connect(
+            host=db_host,
+            database=db_name,
+            user=username,
+            password=password
+        )
         cursor = connection.cursor()
         print("Connected to the database")
-
     except Exception as error:
         print("Error connecting to the database:", error)
         response = {
@@ -39,7 +39,6 @@ def main(event, context):
             'msg': 'Error'
         }
         return response
-
     finally:
         if connection:
             cursor.close()
