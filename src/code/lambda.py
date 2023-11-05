@@ -10,8 +10,6 @@ def main(event, context):
             request_body = json.loads(event['body'])
             table = request_body['table']
             query = get_query(table).split(';')
-            for index, q in enumerate(query):
-                print(f"Iteração {index + 1}: {q}")
             
             #Get secrets
             secret = get_secrets()
@@ -32,6 +30,12 @@ def main(event, context):
             cursor = connection.cursor()
             print("Connected to the database")
             
+            #Executa script
+            for index, q in enumerate(query):
+                print(f"Iteração {index + 1}: {q}")
+                cursor.execute(q)
+
+            connection.commit()
             cursor.close()
             connection.close()
             print("Database connection closed") 
