@@ -50,7 +50,7 @@ data "archive_file" "code" {
 
 ## Infra lambda
 resource "aws_lambda_function" "lambda" {
-  function_name    = "test-lambda"
+  function_name    = "lambda-migration-db"
   handler          = "lambda.main"
   runtime          = "python3.8"
   filename         = data.archive_file.code.output_path
