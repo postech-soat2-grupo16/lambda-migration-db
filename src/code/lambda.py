@@ -73,7 +73,7 @@ def get_query(table):
         s3 = boto3.client('s3')
         bucket_name = os.environ['BUCKET_NAME']
         key = 'scripts/'+table+'.sql'
-        file = s3.get_object(Bucket=bucket, Key=key)
+        file = s3.get_object(Bucket=bucket_name, Key=key)
         query = file['Body'].read().decode('utf-8')
         return query
     except Exception as e:
