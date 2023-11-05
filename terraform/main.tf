@@ -70,6 +70,7 @@ resource "aws_lambda_function" "lambda" {
       "RDS_ENDPOINT" = var.rds_endpoint
       "DB_NAME"      = var.rds_db_name
       "BUCKET_NAME"  = var.bucket_name
+      "SECRET_NAME"  = var.secret_name
     }
   }
 }

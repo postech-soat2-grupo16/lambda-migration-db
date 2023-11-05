@@ -79,7 +79,7 @@ def main(event, context):
 
 def get_secrets():
     # Create a Secrets Manager client
-    secret_name = "rds/fastfood/secret"
+    secret_name = secret_name = os.environ['SECRET_NAME']
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',

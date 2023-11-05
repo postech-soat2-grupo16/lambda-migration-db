@@ -46,3 +46,8 @@ variable "bucket_name" {
   type = string
   default = "terraform-state-soat"
 }
+
+variable "secret_name" {
+  type = string
+  sensitive = true
+}
