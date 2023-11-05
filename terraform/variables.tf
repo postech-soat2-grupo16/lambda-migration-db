@@ -41,3 +41,8 @@ variable "security_group_lambda" {
   type = string
   default = "value"
 }
+
+variable "bucket_name" {
+  type = string
+  default = "terraform-state-soat"
+}
