@@ -68,6 +68,7 @@ resource "aws_lambda_function" "lambda" {
     variables = {
       "RDS_ENDPOINT" = var.rds_endpoint
       "DB_NAME"      = var.rds_db_name
+      "BUCKET_NAME"  = var.bucket_name
     }
   }
 }
