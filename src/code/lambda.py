@@ -32,8 +32,11 @@ def main(event, context):
             
             #Executa script
             for index, q in enumerate(query):
-                print(f"Iteração {index + 1}: {q}")
-                cursor.execute(q)
+                if len(q) > 0:
+                    print(f"Iteração {index + 1}: {q}")
+                    cursor.execute(q)
+                else:
+                    print("FIM")
 
             connection.commit()
             cursor.close()
