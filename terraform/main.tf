@@ -58,6 +58,7 @@ resource "aws_lambda_function" "lambda" {
   role             = var.lambda_execution_role
   timeout          = 120
   #layers           = [aws_lambda_layer_version.layer.arn]
+  description = "Lamda para executar scripts DB"
 
   vpc_config {
     subnet_ids         = [var.subnet_a, var.subnet_b]
