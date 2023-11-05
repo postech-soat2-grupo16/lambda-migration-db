@@ -35,10 +35,10 @@ def main(event, context):
                 if len(q) > 0:
                     print(f"Iteração {index + 1}: {q}")
                     cursor.execute(q)
+                    connection.commit()
                 else:
                     print("FIM")
 
-            connection.commit()
             cursor.close()
             connection.close()
             print("Database connection closed") 
@@ -46,21 +46,35 @@ def main(event, context):
             #Response        
             response = {
                 'statusCode': 200,
-                'username': db_username
+                 'headers': {
+                    "Content-Type": "application/json"
+                },
+                'body': json.dumps({
+                    'msg': 'Script OK'
+                })
             }
             return response
         except Exception as error:
             print("Error connecting to the database:", error)
             response = {
                 'statusCode': 500,
-                'msg': 'Error'
+                 'headers': {
+                    "Content-Type": "application/json"
+                },
+                'body': json.dumps({
+                    'msg': 'error'
+                })
             }
             return response
     else:
-        # Handle the case where there's no body in the request
         return {
-            'statusCode': 400,  # Return an appropriate status code
-            'body': json.dumps({'error': 'No request body provided'})
+            'statusCode': 400,
+                'headers': {
+                "Content-Type": "application/json"
+            },
+            'body': json.dumps({
+                'msg': 'No request Body'
+            })
         }
 
 def get_secrets():
