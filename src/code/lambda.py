@@ -13,7 +13,7 @@ def main(event, context):
             file_name = request_body['file_name']
 
             #Get query from S3 file
-            query = get_query(db_domain).split(';')
+            query = get_query(db_domain, file_name).split(';')
             
             #Get secrets
             secret = get_secrets(secretName)
