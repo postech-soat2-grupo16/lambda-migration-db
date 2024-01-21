@@ -14,33 +14,6 @@ terraform {
   }
 }
 
-# ## Resource para instalar as deps
-# resource "null_resource" "pip_install" {
-#   triggers = {
-#     shell_hash = "${sha256(file("../src/code/requirements.txt"))}"
-#   }
-
-#   provisioner "local-exec" {
-#     command = "python -m pip install -r ../src/code/requirements.txt -t ../src/code"
-#   }
-# }
-
-# ## Cria o .zip da layer
-# data "archive_file" "layer" {
-#   type        = "zip"
-#   source_dir  = "../src/layer"
-#   output_path = "../src/layer/layer.zip"
-#   depends_on  = [null_resource.pip_install]
-# }
-
-# ## Config Layer
-# resource "aws_lambda_layer_version" "layer" {
-#   layer_name          = "test-layer"
-#   filename            = data.archive_file.layer.output_path
-#   source_code_hash    = data.archive_file.layer.output_base64sha256
-#   compatible_runtimes = ["python3.9", "python3.8", "python3.7", "python3.6"]
-# }
-
 ## .zip do código
 data "archive_file" "code" {
   type        = "zip"
@@ -48,8 +21,35 @@ data "archive_file" "code" {
   output_path = "../src/code/code.zip"
 }
 
+#Security Group Lambda Migration
+resource "aws_security_group" "security_group_migration_lambda" {
+  name_prefix = "security_group_migration_lambda"
+  description = "SG for migration Lambda"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    infra   = "lambda"
+    service = "migration"
+    Name    = "security_group_migration_lambda"
+  }
+}
+
 ## Infra lambda
-resource "aws_lambda_function" "lambda" {
+resource "aws_lambda_function" "migration_lambda" {
   function_name    = "lambda-migration-db"
   handler          = "lambda.main"
   runtime          = "python3.8"
@@ -57,20 +57,16 @@ resource "aws_lambda_function" "lambda" {
   source_code_hash = data.archive_file.code.output_base64sha256
   role             = var.lambda_execution_role
   timeout          = 120
-  #layers           = [aws_lambda_layer_version.layer.arn]
-  description = "Lamda para executar scripts DB"
+  description      = "Lambda para executar scripts DB"
 
   vpc_config {
     subnet_ids         = [var.subnet_a, var.subnet_b]
-    security_group_ids = [var.security_group_lambda]
+    security_group_ids = [aws_security_group.security_group_migration_lambda.id]
   }
 
   environment {
     variables = {
-      "RDS_ENDPOINT" = var.rds_endpoint
-      "DB_NAME"      = var.rds_db_name
       "BUCKET_NAME"  = var.bucket_name
-      "SECRET_NAME"  = var.secret_name
     }
   }
 }

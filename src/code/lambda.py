@@ -6,13 +6,17 @@ import os
 def main(event, context):
     if 'body' in event:
         try:
-            #Get query from S3 file
+            #Get data from body
             request_body = json.loads(event['body'])
-            table = request_body['table']
-            query = get_query(table).split(';')
+            db_domain = request_body['db_domain']
+            secret_name = request_body['secret']
+            file_name = request_body['file_name']
+
+            #Get query from S3 file
+            query = get_query(db_domain).split(';')
             
             #Get secrets
-            secret = get_secrets()
+            secret = get_secrets(secretName)
             db_username = secret['username']
             db_password = secret['password']
             db_name = secret['dbname']
@@ -55,7 +59,7 @@ def main(event, context):
             }
             return response
         except Exception as error:
-            print("Error connecting to the database:", error)
+            print("Error connecting to the database: ", error)
             response = {
                 'statusCode': 500,
                  'headers': {
@@ -77,26 +81,29 @@ def main(event, context):
             })
         }
 
-def get_secrets():
+def get_secrets(secret_name):
     # Create a Secrets Manager client
-    secret_name = secret_name = os.environ['SECRET_NAME']
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name='us-east-1'
-    )
-    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
-    secret = json.loads(get_secret_value_response['SecretString'])    
-    return secret
+    try:
+        secret_name = secret_name = os.environ[secret_name]
+        session = boto3.session.Session()
+        client = session.client(
+            service_name='secretsmanager',
+            region_name='us-east-1'
+        )
+        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        secret = json.loads(get_secret_value_response['SecretString'])    
+        return secret
+    except Exception as e:
+        print('Error SM ', e)
 
-def get_query(table):
+def get_query(db_domain, file_name):
     try:
         s3 = boto3.client('s3')
         bucket_name = os.environ['BUCKET_NAME']
-        key = 'scripts/'+table+'.sql'
+        key = 'scripts/'+db_domain+'/'+file_name+'.sql'
         file = s3.get_object(Bucket=bucket_name, Key=key)
         query = file['Body'].read().decode('utf-8')
         return query
     except Exception as e:
-        print('Error S3', e)
+        print('Error S3 ', e)
     
