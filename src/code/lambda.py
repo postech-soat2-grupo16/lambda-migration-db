@@ -16,7 +16,7 @@ def main(event, context):
             query = get_query(db_domain, file_name).split(';')
             
             #Get secrets
-            secret = get_secrets(secretName)
+            secret = get_secrets(secret_name)
             db_username = secret['username']
             db_password = secret['password']
             db_name = secret['dbname']
@@ -84,7 +84,6 @@ def main(event, context):
 def get_secrets(secret_name):
     # Create a Secrets Manager client
     try:
-        secret_name = secret_name = os.environ[secret_name]
         session = boto3.session.Session()
         client = session.client(
             service_name='secretsmanager',
