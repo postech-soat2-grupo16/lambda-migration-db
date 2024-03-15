@@ -194,5 +194,6 @@ override.tf.json
 .terraformrc
 terraform.rc
 terraform/.terraform
+terraform/.terraform.*
 src/code/code.zip
 plan

@@ -6,6 +6,7 @@ import os
 def main(event, context):
     if 'body' in event:
         try:
+            print("CHegou aqui")
             #Get data from body
             request_body = json.loads(event['body'])
             db_domain = request_body['db_domain']
